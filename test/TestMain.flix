@@ -1,9 +1,26 @@
-use Date.create
-use Date.Date
+use DateModule.createYYYYMMDD
+use DateModule.Date
 
 @Test
 def testValidDate(): Bool =
-    let date1 = create(2024,1,1);
-    let date2 = Date(2024,1,1);
-    Assert.eq(date1, date2)
-//    create(1,2,3)
+    let maybeDate = createYYYYMMDD(2024,1,1);
+    match(maybeDate) {
+        case Ok(date) => Assert.eq(date, Date.DateYYYYMMDD(2024,1,1))
+        case Err(_) => false
+    }
+
+@Test
+def testInValidMonth(): Bool =
+    let maybeDate = createYYYYMMDD(2024,-1,21);
+    match(maybeDate) {
+        case Ok(_) => false
+        case Err(_) => true
+    }
+
+@Test
+def testInValidDay(): Bool =
+    let maybeDate = createYYYYMMDD(2024,1,41);
+    match(maybeDate) {
+        case Ok(_) => false
+        case Err(_) => true
+    }
