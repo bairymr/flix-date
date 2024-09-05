@@ -21,8 +21,23 @@ mod DateModule {
         if (year < 0 or month < 1 or month > 12 or day < 1 or day > 31) {
             false
         } else {
-            true
+            if (day > numOfDaysInMonth(month, year)) {
+                false
+            } else {
+                true
+            }
         }
+    
+    def numOfDaysInMonth(month: Int32, year: Int32): Int32 = match(month) {
+            case 1 => 31
+            case 2 if isLeapYear(year) => 29
+            case 2 if not isLeapYear(year) => 28
+            case _ if Int32.modulo(month, 2) == 0 => 30
+            case _ => 31
+        }
+
+    def isLeapYear(year: Int32): Bool = 
+        Int32.modulo(year, 4) == 0 and (Int32.modulo(year, 100) != 100 or Int32.modulo(year, 400) == 0)
 
     pub def createYYYYMMDD(year: Int32, month: Int32, day: Int32): Result[String,Date] = 
         match(isValidDate(year, month, day)) {
