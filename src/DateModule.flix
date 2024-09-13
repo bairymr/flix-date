@@ -44,4 +44,28 @@ mod DateModule {
             case true => Ok(Date.DateYYYYMMDD(year, month, day))
             case false => Err("Invalid date - year ${year} or month ${month} or day ${day} is not valid")
         }
+    
+
+
+    def incrementDateByOneDay(date: Date): Result[String, Date] =
+        match(date) {
+            case Date.DateYYYYMMDD(y,m,d) if d+1 <= numOfDaysInMonth(m, y) => createYYYYMMDD(y, m, d+1)
+            case Date.DateYYYYMMDD(y,m,d) if d+1 > numOfDaysInMonth(m, y) and m < 12 => createYYYYMMDD(y, m+1, 1)
+            case Date.DateYYYYMMDD(y,m,d) if d+1 > numOfDaysInMonth(m, y) and m == 12 => createYYYYMMDD(y+1, 1, 1)
+            case _ => Err("Something bad happened")
+        }
+
+    pub def numOfDaysBetween(fromDate: Date, toDate: Date): Result[String, Int32] = 
+        if (fromDate == toDate) {
+            Ok(0)
+        } else {
+            match(incrementDateByOneDay(fromDate)) {
+                case Ok(newDate) => match(numOfDaysBetween(newDate, toDate)) {
+                    case Ok(num) => Ok(1+num)
+                    case _ => Err("??")
+                }
+                case _ => Err("Something bad happened")
+            }
+        }
+
 }

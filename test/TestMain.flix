@@ -24,3 +24,12 @@ def testInValidDay(): Bool =
         case Ok(_) => false
         case Err(_) => true
     }
+
+@Test
+def testNumDaysBetweenDates(): Bool =
+    let fromDate = createYYYYMMDD(2024,1,1);
+    let toDate = createYYYYMMDD(2024,2,1);
+    match (fromDate, toDate) {
+        case (Ok(date1), Ok(date2)) => DateModule.numOfDaysBetween(date1, date2) == Ok(31)
+        case _ => false
+    }
