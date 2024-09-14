@@ -1,5 +1,6 @@
 use DateModule.createYYYYMMDD
 use DateModule.Date
+use DateModule.DateComparison
 
 @Test
 def testValidDate(): Bool =
@@ -31,5 +32,14 @@ def testNumDaysBetweenDates(): Bool =
     let toDate = createYYYYMMDD(2024,2,1);
     match (fromDate, toDate) {
         case (Ok(date1), Ok(date2)) => DateModule.numOfDaysBetween(date1, date2) == Ok(31)
+        case _ => false
+    }
+
+@Test
+def testCompareDates(): Bool =
+    let fromDate = createYYYYMMDD(2024,1,1);
+    let toDate = createYYYYMMDD(2024,2,1);
+    match (fromDate, toDate) {
+        case (Ok(date1), Ok(date2)) => Assert.eq(DateModule.compareDates(date1, date2), DateComparison.LessThan)
         case _ => false
     }

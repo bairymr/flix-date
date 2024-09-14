@@ -3,6 +3,29 @@ mod DateModule {
         case DateYYYYMMDD(Int32, Int32, Int32)
     }
 
+    enum DateComparison {
+        case GreaterThan,
+        case Equal,
+        case LessThan
+    }
+
+    instance Eq[DateComparison] {
+        pub def eq(x: DateComparison, y: DateComparison): Bool = match (x, y) {
+            case (DateComparison.GreaterThan, DateComparison.GreaterThan) => true
+            case (DateComparison.LessThan, DateComparison.LessThan) => true
+            case (DateComparison.Equal, DateComparison.Equal) => true
+            case _ => false
+        }
+    }
+
+    instance ToString[DateComparison] {
+        pub def toString(x: DateComparison): String = match (x) {
+            case DateComparison.GreaterThan => "Greater than"
+            case DateComparison.LessThan => "Less than"
+            case DateComparison.Equal => "Equal"
+        }
+    }
+
     instance Eq[Date] {
         pub def eq(x: Date, y: Date): Bool = match (x, y) {
                 case (Date.DateYYYYMMDD(y1,m1,d1), Date.DateYYYYMMDD(y2,m2,d2)) if (y1 == y2 and m1 == m2 and d1 == d2) => true 
@@ -39,13 +62,28 @@ mod DateModule {
     def isLeapYear(year: Int32): Bool = 
         Int32.modulo(year, 4) == 0 and (Int32.modulo(year, 100) != 100 or Int32.modulo(year, 400) == 0)
 
+    def cummulativeAmount(year: Int32, month: Int32, day: Int32): Int32 = year + month+ day
+
+    pub def compareDates(fromDate: Date, toDate: Date): DateComparison = 
+        match(fromDate, toDate) {
+            case (Date.DateYYYYMMDD(fromYear, fromMonth, fromDay), Date.DateYYYYMMDD(toYear, toMonth, toDay)) => 
+                let fromCummulative = cummulativeAmount(fromYear , fromMonth , fromDay);
+                let toCummulative = cummulativeAmount(toYear, toMonth, toDay);
+                if ( fromCummulative > toCummulative) {
+                    DateComparison.GreaterThan
+                } else if (fromCummulative < toCummulative) {
+                    DateComparison.LessThan
+                } else {
+                    DateComparison.Equal
+                }
+            case _ => DateComparison.Equal
+        }
+
     pub def createYYYYMMDD(year: Int32, month: Int32, day: Int32): Result[String,Date] = 
         match(isValidDate(year, month, day)) {
             case true => Ok(Date.DateYYYYMMDD(year, month, day))
             case false => Err("Invalid date - year ${year} or month ${month} or day ${day} is not valid")
         }
-    
-
 
     def incrementDateByOneDay(date: Date): Result[String, Date] =
         match(date) {
